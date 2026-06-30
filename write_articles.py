@@ -1,4 +1,15 @@
-import ollama
+from openai import OpenAI
+import os
+
+# DeepSeek API key from environment (Streamlit secrets set this)
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
+if not DEEPSEEK_API_KEY:
+    raise ValueError("Missing DEEPSEEK_API_KEY environment variable")
+
+client = OpenAI(
+    api_key=DEEPSEEK_API_KEY,
+    base_url="https://api.deepseek.com"
+)
 
 def write_article(video_title, video_description, transcript):
     prompt = f"""
@@ -19,12 +30,13 @@ Raw Transcript:
 
 Output only the final article text, with no additional commentary.
 """
-    response = ollama.chat(
-        model='llama3.2:3b',
+    response = client.chat.completions.create(
+        model="deepseek-chat",
         messages=[
             {"role": "system", "content": "You are a professional editor specializing in transforming video content into engaging written articles."},
             {"role": "user", "content": prompt}
         ],
-        options={'temperature': 0.7, 'num_predict': 4096}
+        max_tokens=4096,
+        temperature=0.7
     )
-    return response['message']['content']
+    return response.choices[0].message.content
