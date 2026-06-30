@@ -1,7 +1,11 @@
-from openai import OpenAI
 import os
+from dotenv import load_dotenv
 
-# DeepSeek API key from environment (Streamlit secrets set this)
+# Load .env file if it exists (local use)
+load_dotenv()
+
+from openai import OpenAI
+
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 if not DEEPSEEK_API_KEY:
     raise ValueError("Missing DEEPSEEK_API_KEY environment variable")
